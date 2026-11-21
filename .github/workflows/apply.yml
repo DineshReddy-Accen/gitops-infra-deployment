@@ -1,0 +1,30 @@
+name: Apply Infrastructure
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  apply:
+    if: github.event.pull_request.merged == true
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -auto-approve
